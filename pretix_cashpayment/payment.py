@@ -8,7 +8,6 @@ from i18nfield.strings import LazyI18nString
 
 from pretix.base.models import OrderPayment
 from pretix.base.payment import BasePaymentProvider
-from pretix.base.templatetags.rich_text import rich_text
 
 
 class CashPayment(BasePaymentProvider):
@@ -37,7 +36,7 @@ class CashPayment(BasePaymentProvider):
         ctx = {
             'request': request,
             'event': self.event,
-            'information_text': rich_text(self.settings.get('information_text', as_type=LazyI18nString)),
+            'information_text': self.settings.get('information_text', as_type=LazyI18nString),
         }
         return template.render(ctx)
 
