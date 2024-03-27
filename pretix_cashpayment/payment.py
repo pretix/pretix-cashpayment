@@ -31,9 +31,9 @@ class CashPayment(BasePaymentProvider):
     
     @property
     def public_name(self) -> str:
-        return str(self.settings.get("public_name", as_type=LazyI18nString)) or _(
+        return str(self.settings.get("public_name", as_type=LazyI18nString) or _(
             "Cash Payment"
-        )
+        ))
     
     @property
     def provider_last_payment(self):
