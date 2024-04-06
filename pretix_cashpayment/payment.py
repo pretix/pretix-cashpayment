@@ -34,10 +34,6 @@ class CashPayment(BasePaymentProvider):
         return str(self.settings.get("public_name", as_type=LazyI18nString) or _(
             "Cash Payment"
         ))
-    
-    @property
-    def provider_last_payment(self):
-        return self.settings.get("provider_last_payment")
 
     @property
     def settings_form_fields(self):
@@ -57,7 +53,8 @@ class CashPayment(BasePaymentProvider):
             (
                 "provider_last_payment",
                 RelativeDateTimeField(required=False,
-                                      label='Override order expiration for this payment method')
+                                      label=_('Override order expiration date'),
+                                      help_text=_('The order expiration date will only be changed by this setting if it is later than the date set for the event generally.'),
             ),
         ]
         return OrderedDict(
@@ -109,14 +106,15 @@ class CashPayment(BasePaymentProvider):
     def execute_payment(self, request: HttpRequest, payment: OrderPayment):
         order = payment.order
 
-        # custom expiry date for this payment provider
-        custom_expires=self.provider_last_payment
-        if (custom_expires):
-            reldate = RelativeDateWrapper.from_string(custom_expires)
-            subevents = order.event.subevents.filter(id__in=order.positions.values_list('subevent_id', flat=True))
-            self.set_custom_expires(order, reldate, subevents)
+        custom_expires = self.settings.get("provider_last_payment, as_type=RelativeDateWrapper)
+        if custom_expires:
+            if self.event.has_subevents:
+	        subevents = order.event.subevents.filter(id__in=order.positions.values_list('subevent_id', flat=True))
+	    else:
+	        subevents = None
+            self._set_custom_expires(order, custom_expires, subevents)
     
-    def set_custom_expires(self, order: Order, reldate: RelativeDateWrapper, subevents=None):
+    def _set_custom_expires(self, order: Order, reldate: RelativeDateWrapper, subevents=None):
         if reldate:
             expiry_date = order.expires
 
