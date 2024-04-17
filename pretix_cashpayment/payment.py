@@ -52,9 +52,11 @@ class CashPayment(BasePaymentProvider):
             ),
             (
                 "provider_last_payment",
-                RelativeDateTimeField(required=False,
-                                      label=_('Override order expiration date'),
-                                      help_text=_('The order expiration date will only be changed by this setting if it is later than the date set for the event generally.'),
+                RelativeDateTimeField(
+                    required=False,
+                    label=_('Override order expiration date'),
+                    help_text=_('The order expiration date will only be changed by this setting if it is later than the date set for the event generally.'),
+                )
             ),
         ]
         return OrderedDict(
@@ -106,12 +108,12 @@ class CashPayment(BasePaymentProvider):
     def execute_payment(self, request: HttpRequest, payment: OrderPayment):
         order = payment.order
 
-        custom_expires = self.settings.get("provider_last_payment, as_type=RelativeDateWrapper)
+        custom_expires = self.settings.get("provider_last_payment", as_type=RelativeDateWrapper)
         if custom_expires:
             if self.event.has_subevents:
-	        subevents = order.event.subevents.filter(id__in=order.positions.values_list('subevent_id', flat=True))
-	    else:
-	        subevents = None
+                subevents = order.event.subevents.filter(id__in=order.positions.values_list('subevent_id', flat=True))
+            else:
+                subevents = None
             self._set_custom_expires(order, custom_expires, subevents)
     
     def _set_custom_expires(self, order: Order, reldate: RelativeDateWrapper, subevents=None):
