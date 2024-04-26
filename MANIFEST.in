@@ -1,3 +1,9 @@
 recursive-include pretix_cashpayment/static *
 recursive-include pretix_cashpayment/templates *
 recursive-include pretix_cashpayment/locale *
+include LICENSE
+exclude .gitlab-ci.yml
+exclude Makefile
+exclude pretixplugin.toml
+exclude pytest.ini
+
