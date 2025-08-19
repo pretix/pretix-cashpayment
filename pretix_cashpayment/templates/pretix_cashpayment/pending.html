@@ -2,13 +2,8 @@
 {% load l10n %}
 {% load rich_text %}
 
-<p>{% blocktrans trimmed %}
-    Please print out this page and bring it with you when paying.
-{% endblocktrans %}</p>
-
-<address>
-    {{ information_text|rich_text }}<br />
-    <br />
+{{ information_text|rich_text }}
+<p>
     {% trans "Amount:" %} {{ order.total|localize }} {{ event.currency }}<br />
-    <strong>{% trans "Reference code (important):" %} {{ order.full_code }}</strong><br />
-</address>
+    <strong>{% trans "Reference code (important):" %} {{ order.full_code }}</strong>
+</p>
